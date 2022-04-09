@@ -1,0 +1,32 @@
+#include <iostream>
+#include <experimental/filesystem>
+#include <vector>
+#include <memory>
+
+using std::string;    using std::vector;
+using std::cout;      using std::make_unique;
+
+int main()
+{
+   auto recursiveGetFileNamesByExtension =
+        [](std::experimental::filesystem::path pth,
+            const string extension)
+    {
+       vector <std::experimental::filesystem::path> fileName;
+
+        for (auto& p : std::experimental::filesystem::recursive_directory_iterator(pth))
+        {
+            if (!p.path().extension().compare(extension))
+                fileName.emplace_back(p.path().filename());
+        }
+
+        return make_unique < vector <std::experimental::filesystem::path> > (fileName);
+    };
+
+    auto files = recursiveGetFileNamesByExtension("E:\\", ".exe").release();
+
+    for (auto& name : *files)
+        cout << name << "\n";
+
+    return 0;
+}
